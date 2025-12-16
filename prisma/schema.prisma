@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum GlobalRole {
+  ADMIN
+  USER
+}
+
+enum BoardRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+model Board {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members   BoardMember[]
+  tasks     Task[]  
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  passwordHash String
+  role         GlobalRole @default(USER)
+  boards BoardMember[]
+  tasks     Task[]  
+}
+
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  board       Board      @relation(fields: [boardId], references: [id])
+  boardId     Int
+  createdBy   User       @relation(fields: [createdById], references: [id])
+  createdById Int
+  status      TaskStatus @default(TODO)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model BoardMember {
+  id       Int       @id @default(autoincrement())
+  board    Board     @relation(fields: [boardId], references: [id])
+  boardId  Int
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int
+  role     BoardRole @default(VIEWER)
+
+  @@unique([boardId, userId])
+}
