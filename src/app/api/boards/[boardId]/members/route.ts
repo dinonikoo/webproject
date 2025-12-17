@@ -50,23 +50,23 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ boardId: string }> }
 ) {
-  const user = await getCurrentUser();
-  if (!user) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   }
 
   const { boardId } = await params;
-  const id = Number(boardId);
-  if (!id) {
+  const boardIdNum = Number(boardId);
+  if (!boardIdNum) {
     return NextResponse.json({ message: 'Invalid boardId' }, { status: 400 });
   }
 
-  // Проверяем, что текущий пользователь — ADMIN доски
+  // Проверка прав (ADMIN)
   const adminMembership = await prisma.boardMember.findUnique({
     where: {
       boardId_userId: {
-        boardId: id,
-        userId: user.id,
+        boardId: boardIdNum,
+        userId: currentUser.id,
       },
     },
   });
@@ -75,31 +75,44 @@ export async function POST(
     return NextResponse.json({ message: 'No permission' }, { status: 403 });
   }
 
-  const { userId, role } = (await req.json()) as {
-    userId?: number;
+  const { name, role } = (await req.json()) as {
+    name?: string;
     role?: BoardRole;
   };
 
-  if (!userId || !role) {
+  if (!name || !role) {
     return NextResponse.json(
-      { message: 'userId or role missing' },
+      { message: 'name or role missing' },
       { status: 400 }
     );
   }
-  
-  if (userId === user.id) {
-  return NextResponse.json(
-    { message: 'Нельзя добавить самого себя' },
-    { status: 400 }
-  );
-}
 
-// Проверяем, что пользователь ещё не состоит в доске
+  // Ищем пользователя по уникальному name
+  const userToAdd = await prisma.user.findUnique({
+    where: { name },
+    select: { id: true, name: true },
+  });
+
+  if (!userToAdd) {
+    return NextResponse.json(
+      { message: 'Пользователь не найден' },
+      { status: 404 }
+    );
+  }
+
+  if (userToAdd.id === currentUser.id) {
+    return NextResponse.json(
+      { message: 'Нельзя добавить самого себя' },
+      { status: 400 }
+    );
+  }
+
+  // Проверка, что пользователь ещё не в доске
   const existingMember = await prisma.boardMember.findUnique({
     where: {
       boardId_userId: {
-        boardId: id,
-        userId,
+        boardId: boardIdNum,
+        userId: userToAdd.id,
       },
     },
   });
@@ -111,29 +124,21 @@ export async function POST(
     );
   }
 
-const member = await prisma.boardMember.upsert({
-  where: {
-    boardId_userId: {
-      boardId: id,
-      userId,
+  const member = await prisma.boardMember.create({
+    data: {
+      boardId: boardIdNum,
+      userId: userToAdd.id,
+      role,
     },
-  },
-  update: { role: role },
-  create: {
-    boardId: id,
-    userId,
-    role: role,
-  },
-  include: {
-    user: {
-      select: {
-        id: true,
-        name: true,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
       },
     },
-  },
-});
-
+  });
 
   return NextResponse.json(member);
 }

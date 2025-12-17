@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 
 export async function POST(req: Request) {
   const { name, password } = await req.json();
+  console.log('[LOGIN ATTEMPT]', name); // логируем попытку логина
 
   const user = await prisma.user.findUnique({
     where: { name },

@@ -1,8 +1,14 @@
-// src/app/api/auth/logout/route.ts
+import { NextResponse } from 'next/server';
+
 export async function POST() {
-  return new Response(null, {
-    headers: {
-      'Set-Cookie': 'userId=; Path=/; Max-Age=0',
-    },
+  const response = NextResponse.json({ ok: true });
+
+  response.cookies.set({
+    name: 'userId',
+    value: '',
+    maxAge: 0,
+    path: '/',
   });
+
+  return response;
 }

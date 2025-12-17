@@ -3,38 +3,57 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useUser } from '@/context/UserContext';
 
-interface Board {
+interface User {
   id: number;
   name: string;
 }
 
-export default function Page() {
+interface BoardMember {
+  userId: number;
+  role: string;
+  user: User;
+}
+
+interface Board {
+  id: number;
+  name: string;
+  members: BoardMember[];
+}
+
+export default function BoardsPage() {
   const router = useRouter();
+  const { user, isLoading } = useUser();
   const [boards, setBoards] = useState<Board[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [newBoardName, setNewBoardName] = useState('');
 
+  // Проверка авторизации и загрузка досок
   useEffect(() => {
-    const fetchBoards = async () => {
-      try {
-        const res = await fetch('/api/boards');
-        if (!res.ok) {
-          if (res.status === 401) router.push('/login');
-          throw new Error('Ошибка при загрузке досок');
-        }
-        const data = await res.json();
-        setBoards(data.map((b: any) => b.board));
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!isLoading && !user) {
+      router.push('/login');
+      return;
+    }
 
-    fetchBoards();
-  }, [router]);
+    if (user) {
+      const fetchBoards = async () => {
+        try {
+          const res = await fetch('/api/boards');
+          if (!res.ok) throw new Error('Ошибка при загрузке досок');
+          const data: Board[] = await res.json();
+          setBoards(data); // доски с участниками
+        } catch (err: any) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchBoards();
+    }
+  }, [router, user, isLoading]);
 
   const handleCreateBoard = async () => {
     if (!newBoardName.trim()) return;
@@ -48,7 +67,7 @@ export default function Page() {
 
       if (!res.ok) throw new Error('Не удалось создать доску');
 
-      const board = await res.json();
+      const board: Board = await res.json();
       setBoards([...boards, board]);
       setNewBoardName('');
     } catch (err: any) {
@@ -56,19 +75,13 @@ export default function Page() {
     }
   };
 
-  if (loading) return <p style={{ textAlign: 'center', marginTop: 50 }}>Загрузка...</p>;
+  // Пока идёт загрузка user или досок показываем индикатор
+  if (loading || isLoading) return <p style={{ textAlign: 'center', marginTop: 50 }}>Загрузка...</p>;
+  if (!user) return null; // редирект будет выполнен useEffect
 
   return (
-        <div
-      style={{
-        minHeight: '100vh',
-        padding: 24,
-        fontFamily: 'sans-serif',
-        backgroundColor: '#fff',
-        color: '#333', // Весь текст темно-серый
-      }}
-    >
-      <h1 style={{ textAlign: 'center', marginBottom: 24, color: '#333' }}>Мои доски</h1>
+    <div style={{ minHeight: '100vh', padding: 24, fontFamily: 'sans-serif', backgroundColor: '#fff', color: '#333' }}>
+      <h1 style={{ textAlign: 'center', marginBottom: 24 }}>Мои доски</h1>
 
       {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 
