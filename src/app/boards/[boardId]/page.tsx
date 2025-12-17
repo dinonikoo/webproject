@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { TaskList } from '../../tasks/TaskList';
+import { Role } from '@/lib/types/Role';
 
 interface Member {
   userId: number;
@@ -24,17 +26,18 @@ export default function Page() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showTasks, setShowTasks] = useState(false);
 
   useEffect(() => {
-  setError('');
-}, [pathname]);
+      setError('');
+  }, [pathname]);
 
 
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [currentUserRole, setCurrentUserRole] = useState<'ADMIN' | 'EDITOR' | 'VIEWER' | null>(null);
+  const [currentUserRole, setCurrentUserRole] = useState<Role | null>(null);
 
   const [newUserId, setNewUserId] = useState('');
-  const [newRole, setNewRole] = useState<'ADMIN' | 'EDITOR' | 'VIEWER'>('VIEWER');
+  const [newRole, setNewRole] = useState<Role>('VIEWER');
 
   // Получение участников и роли текущего пользователя
   const fetchMembers = async () => {
@@ -203,6 +206,26 @@ export default function Page() {
 
 </div>
 
+      {/* Кнопка показать/скрыть задачи */}
+      <button
+        onClick={() => setShowTasks(!showTasks)}
+        style={{
+          margin: '24px auto',
+          display: 'block',
+          padding: '10px 16px',
+          borderRadius: 8,
+          backgroundColor: '#3b82f6',
+          color: '#fff',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+          {showTasks ? 'Скрыть задачи' : 'Показать задачи'}
+      </button>
+
+      {showTasks && <TaskList 
+        boardId={boardId}
+        currentUserRole={currentUserRole} />}
     </div>
   );
 }
