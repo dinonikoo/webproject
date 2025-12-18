@@ -80,7 +80,7 @@ export default function BoardsPage() {
   if (!user) return null; // редирект будет выполнен useEffect
 
   return (
-    <div style={{ minHeight: '100vh', padding: 24, fontFamily: 'sans-serif', backgroundColor: '#fff', color: '#333' }}>
+    <div style={{ minHeight: 'calc(100vh - 48vh)', padding: 24, fontFamily: 'sans-serif', backgroundColor: '#fff', color: '#333' }}>
       <h1 style={{ textAlign: 'center', marginBottom: 24 }}>Мои доски</h1>
 
       {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
