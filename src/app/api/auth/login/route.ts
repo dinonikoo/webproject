@@ -20,6 +20,8 @@ export async function POST(req: Request) {
     return new Response('Invalid password', { status: 401 });
   }
 
+  console.log(user?.role);
+
   // устанавливаем cookie
   return new Response(
     JSON.stringify({ id: user.id, name: user.name, role: user.role }),

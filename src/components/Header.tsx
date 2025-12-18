@@ -37,7 +37,7 @@ export default function Header() {
           cursor: 'pointer',
         }}
       >
-        Мои доски
+        Планировщик задач
       </button>
 
       {user ? (

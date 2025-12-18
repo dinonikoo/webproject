@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { TaskList } from '../../tasks/TaskList';
+import { TaskList } from '../../../components/TaskList';
 import { Role } from '@/lib/types/Role';
 
 interface Member {

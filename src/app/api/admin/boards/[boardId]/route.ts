@@ -16,25 +16,13 @@ export async function GET(
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   }
 
+  if (user.role !== 'ADMIN') {
+    return NextResponse.json({ message: 'No permission' }, { status: 403 });
+    }
+
   const boardIdNum = Number(boardId);
   if (!boardIdNum) {
     return NextResponse.json({ message: 'Invalid boardId' }, { status: 400 });
-  }
-
-  const membership = await prisma.boardMember.findUnique({
-    where: {
-      boardId_userId: {
-        boardId: boardIdNum,
-        userId: user.id,
-      },
-    },
-  });
-
-  if (!membership) {
-    return NextResponse.json(
-      { message: 'You are not a member' },
-      { status: 403 }
-    );
   }
 
   const board = await prisma.board.findUnique({
@@ -72,23 +60,10 @@ export async function DELETE(
     return NextResponse.json({ message: 'Invalid boardId' }, { status: 400 });
   }
 
-  // Проверяем, что пользователь — ADMIN этой доски
-  const membership = await prisma.boardMember.findUnique({
-    where: {
-      boardId_userId: {
-        boardId: boardIdNum,
-        userId: user.id,
-      },
-    },
-  });
+  if (user.role !== 'ADMIN') {
+    return NextResponse.json({ message: 'No permission' }, { status: 403 });
+    }
 
-  if (!membership || membership.role !== 'ADMIN') {
-    return NextResponse.json(
-      { message: 'Only admin can delete this board' },
-      { status: 403 }
-    );
-  }
-  
   await prisma.board.delete({
     where: { id: boardIdNum },
   });

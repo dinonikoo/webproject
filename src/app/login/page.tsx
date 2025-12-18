@@ -16,8 +16,11 @@ export default function LoginPage() {
   // 🔹 Если пользователь уже залогинен — редиректим на /boards
   useEffect(() => {
     if (isLoading) return;
+    if (!user) return;
 
-    if (user) {
+    if (user?.role === 'ADMIN') {
+      router.replace('/admin');
+    } else {
       router.replace('/boards');
     }
   }, [user, isLoading, router]);
@@ -44,9 +47,6 @@ export default function LoginPage() {
 
       // сохраняем пользователя в контекст
       setUser(data);
-
-      // редиректим на доски
-      router.replace('/boards');
     } catch (err) {
       console.error('[LoginPage] Ошибка при логине:', err);
       setError('Ошибка при логине');
