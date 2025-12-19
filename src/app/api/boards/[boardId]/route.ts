@@ -11,7 +11,7 @@ export async function GET(
 ) {
   const { boardId } = await context.params;
 
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(req);
   if (!user) {
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   }
@@ -62,7 +62,7 @@ export async function DELETE(
 ) {
   const { boardId } = await context.params;
 
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(req);
   if (!user) {
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   }
