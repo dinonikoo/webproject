@@ -11,7 +11,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ boardId: string }> }
 ) {
-  const user = await getCurrentUser(); // текущий залогиненный
+  const user = await getCurrentUser(req); // текущий залогиненный
   if (!user) {
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   }
@@ -50,7 +50,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ boardId: string }> }
 ) {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getCurrentUser(req);
   if (!currentUser) {
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   }
@@ -148,7 +148,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ boardId: string }> }
 ) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(req);
   if (!user) {
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   }

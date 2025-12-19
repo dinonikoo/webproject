@@ -12,7 +12,6 @@ export async function GET(
         orderBy: { createdAt: 'asc' },
         include: { createdBy: { select: {  id: true, name: true } } },
     });
-
   return NextResponse.json(tasks);
 }
 
