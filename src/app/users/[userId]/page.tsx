@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { FiUser, FiClipboard } from 'react-icons/fi';
 import { Role } from '@/lib/types/Role';
 
@@ -28,9 +28,9 @@ interface UserInfo {
 }
 
 export default function UserDetail() {
-  const pathname = usePathname();
-  const userId = pathname.split('/')[3];
+  const params = useParams();
   const router = useRouter();
+  const userId = params.userId; 
 
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,9 +38,8 @@ export default function UserDetail() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true);
       try {
-        const res = await fetch(`/api/admin/users/${userId}`);
+        const res = await fetch(`/api/users/${userId}`);
         if (!res.ok) throw new Error('Не удалось загрузить данные пользователя');
         const data = await res.json();
         setUser(data);
@@ -51,7 +50,7 @@ export default function UserDetail() {
       }
     };
 
-    if (userId) fetchUser();
+    fetchUser();
   }, [userId]);
 
   if (loading)
@@ -133,7 +132,7 @@ export default function UserDetail() {
                 transition: 'all 0.3s ease',
                 border: '2px solid #3b82f6',
               }}
-              onClick={() => router.push(`/admin/boards/${b.board.id}`)}
+              onClick={() => router.push(`/boards/${b.board.id}`)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-4px)';
                 e.currentTarget.style.boxShadow =

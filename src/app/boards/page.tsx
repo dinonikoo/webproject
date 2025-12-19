@@ -20,6 +20,7 @@ interface Board {
   id: number;
   name: string;
   members: BoardMember[];
+  createdAt: string;
 }
 
 export default function BoardsPage() {
@@ -81,12 +82,12 @@ export default function BoardsPage() {
 
   return (
     <div style={{ minHeight: 'calc(100vh - 48vh)', padding: 24, fontFamily: 'sans-serif', backgroundColor: '#fff', color: '#333' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: 24 }}>Мои доски</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: 24, fontSize: 25 }}>Мои доски</h1>
 
       {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 
       {/* Создание новой доски */}
-      <div style={{ maxWidth: 600, margin: '0 auto 24px', display: 'flex', gap: 8 }}>
+      <div style={{ maxWidth: 600, margin: '0 auto 32px', display: 'flex', gap: 8 }}>
         <input
           type="text"
           placeholder="Название новой доски"
@@ -99,6 +100,8 @@ export default function BoardsPage() {
             border: '1px solid #3b82f6',
             fontSize: 14,
             outline: 'none',
+            backgroundColor: '#fff',
+            color: '#1e293b',
           }}
         />
         <button
@@ -111,37 +114,79 @@ export default function BoardsPage() {
             color: '#fff',
             fontSize: 14,
             cursor: 'pointer',
+            fontWeight: 500,
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-3px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           Создать доску
         </button>
       </div>
 
+
       {/* Список досок */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
-        {boards.length === 0 && <p>Досок нет</p>}
-        {boards.map((board) => (
-          <Link
+      <div
+        style={{
+          display: 'flex',
+          gap: 24,
+          maxWidth: 1200,
+          margin: '0 auto',
+          flexWrap: 'wrap', 
+          justifyContent: 'center' 
+        }}
+      >
+        {boards.map((board, idx) => (
+          <div
             key={board.id}
-            href={`/boards/${board.id}`}
             style={{
+              width: '100%',
+              maxWidth: 250,
+              padding: 20,
+              borderRadius: 16,
+              backgroundColor: `hsl(${idx * 40 % 360}, 70%, 89%)`,
+              cursor: 'pointer',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+              transition: 'all 0.3s ease',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 180,
-              height: 100,
-              borderRadius: 12,
-              border: '2px solid #3b82f6',
-              textDecoration: 'none',
-              color: '#333',
-              fontWeight: 'bold',
-              fontSize: 16,
-              backgroundColor: '#fff',
-              transition: 'transform 0.2s',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: 140,
+              boxSizing: 'border-box',
+              textAlign: 'center',
+            }}
+            onClick={() => router.push(`/boards/${board.id}`)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
             }}
           >
-            {board.name}
-          </Link>
+            <div>
+              <h2
+                style={{
+                  fontSize: 20,
+                  color: '#1e293b',
+                  marginBottom: 8,
+                  wordBreak: 'break-word',
+                }}
+              >
+                {board.name}
+              </h2>
+              <p style={{ fontSize: 12, color: '#555' }}>
+                Создано: {new Date(board.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
         ))}
       </div>
     </div>

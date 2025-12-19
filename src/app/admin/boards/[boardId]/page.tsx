@@ -118,7 +118,7 @@ export default function AdminBoardPage() {
   if (error) return <p style={{ textAlign: 'center', marginTop: 50, color: 'red' }}>{error}</p>;
 
   return (
-    <div style={{ minHeight: '100vh', padding: 24, fontFamily: 'sans-serif', backgroundColor: '#f9fafb', color: '#333' }}>
+    <div style={{padding: 24, fontFamily: 'sans-serif', color: '#333' }}>
       {/* Информация о доске */}
       {board && (
         <div style={{ maxWidth: 600, margin: '0 auto 24px' }}>
@@ -136,6 +136,15 @@ export default function AdminBoardPage() {
               color: '#fff',
               cursor: 'pointer',
               fontSize: 14,
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
             Удалить доску
@@ -160,6 +169,7 @@ export default function AdminBoardPage() {
             fontSize: 14,
             outline: 'none',
             color: '#333',
+            backgroundColor: '#fff',
           }}
         />
         <select
@@ -172,6 +182,7 @@ export default function AdminBoardPage() {
             fontSize: 14,
             outline: 'none',
             color: '#333',
+            backgroundColor: '#fff',
           }}
         >
           <option value="ADMIN">ADMIN</option>
@@ -188,6 +199,15 @@ export default function AdminBoardPage() {
             color: '#fff',
             fontSize: 14,
             cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-3px)';
+            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           Добавить
@@ -201,13 +221,22 @@ export default function AdminBoardPage() {
           <div
             key={member.userId}
             style={{
+              padding: '16px',
+              borderRadius: '16px',
+              backgroundColor: '#ddecfcff',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              padding: 12,
-              borderRadius: 12,
-              border: '2px solid #3b82f6',
-              backgroundColor: '#fff',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
             <div>{member.user.name} ({member.role})</div>
@@ -245,6 +274,15 @@ export default function AdminBoardPage() {
           color: '#fff',
           border: 'none',
           cursor: 'pointer',
+          transition: 'all 0.2s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-3px)';
+          e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
         }}
       >
         {showTasks ? 'Скрыть задачи' : 'Показать задачи'}

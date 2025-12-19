@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import { usePathname } from 'next/navigation';
 import { UserProvider } from '@/context/UserContext';
+import { MenuProvider } from '@/context/MenuContext';
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,8 +15,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ru">
       <body>
         <UserProvider>
-          {!hideHeader && <Header />}
-          <main>{children}</main>
+          <MenuProvider>
+            {!hideHeader && <Header />}
+            <main style={{ paddingTop: hideHeader? 0: 64 }}>{children}</main>
+          </MenuProvider>
         </UserProvider>
       </body>
     </html>

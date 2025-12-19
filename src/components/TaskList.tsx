@@ -158,9 +158,18 @@ export function TaskList({ boardId, currentUserRole }: { boardId: string; curren
           marginBottom: 20,
           padding: 18,
           borderRadius: 14,
-          backgroundColor: '#fff',
+          backgroundColor: '#fefefeff',
           boxShadow: '0 6px 16px rgba(0,0,0,0.08)',
           borderLeft: `6px solid ${statusColors[task.status]}`,
+          transition: 'all 0.2s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-3px)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
         }}
       >
         {/* Заголовок + статус */}

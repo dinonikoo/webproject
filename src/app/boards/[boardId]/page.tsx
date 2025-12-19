@@ -189,97 +189,101 @@ export default function Page() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        padding: 24,
-        fontFamily: 'sans-serif',
-        backgroundColor: '#fff',
-        color: '#333',
-      }}
-    >
+     <div style={{padding: 24, fontFamily: 'sans-serif', color: '#333' }}>
       {/* Информация о доске */}
       {board && (
         <div style={{ maxWidth: 600, margin: '0 auto 24px' }}>
           <h1>{board.name}</h1>
-          <p style={{ color: '#666' }}>
-            Создана: {new Date(board.createdAt).toLocaleDateString()}
-          </p>
+          <p style={{ color: '#666' }}>Создана: {new Date(board.createdAt).toLocaleDateString()}</p>
 
-          {currentUserRole === 'ADMIN' && (
-            <button
-              onClick={handleDeleteBoard}
-              style={{
-                marginTop: 12,
-                padding: '10px 16px',
-                borderRadius: 8,
-                border: 'none',
-                backgroundColor: '#ef4444',
-                color: '#fff',
-                cursor: 'pointer',
-                fontSize: 14,
-              }}
-            >
-              Удалить доску
-            </button>
-          )}
+          <button
+            onClick={handleDeleteBoard}
+            style={{
+              marginTop: 12,
+              padding: '10px 16px',
+              borderRadius: 8,
+              border: 'none',
+              backgroundColor: '#ef4444',
+              color: '#fff',
+              cursor: 'pointer',
+              fontSize: 14,
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            Удалить доску
+          </button>
         </div>
       )}
 
       <h2 style={{ textAlign: 'center', marginBottom: 24 }}>Участники</h2>
 
-      {error && <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>}
-
       {/* Добавление участника */}
-      {currentUserRole === 'ADMIN' && (
-        <div style={{ maxWidth: 600, margin: '0 auto 24px', display: 'flex', gap: 8 }}>
-          <input
-            type="text"
-            placeholder="Имя пользователя"
-            value={newUserName}
-            onChange={(e) => setNewUserName(e.target.value)}
-            style={{
-              flex: 1,
-              padding: 10,
-              borderRadius: 8,
-              border: '1px solid #3b82f6',
-              fontSize: 14,
-              outline: 'none',
-              color: '#333',
-            }}
-          />
-          <select
-            value={newRole}
-            onChange={(e) => setNewRole(e.target.value as Role)}
-            style={{
-              padding: 10,
-              borderRadius: 8,
-              border: '1px solid #3b82f6',
-              fontSize: 14,
-              outline: 'none',
-              color: '#333',
-            }}
-          >
-            <option value="ADMIN">ADMIN</option>
-            <option value="EDITOR">EDITOR</option>
-            <option value="VIEWER">VIEWER</option>
-          </select>
-          <button
-            onClick={handleAddMember}
-            style={{
-              padding: '10px 16px',
-              borderRadius: 8,
-              border: 'none',
-              backgroundColor: '#3b82f6',
-              color: '#fff',
-              fontSize: 14,
-              cursor: 'pointer',
-            }}
-          >
-            Добавить
-          </button>
-        </div>
-      )}
+      <div style={{ maxWidth: 600, margin: '0 auto 24px', display: 'flex', gap: 8 }}>
+        <input
+          type="text"
+          placeholder="Имя пользователя"
+          value={newUserName}
+          onChange={(e) => setNewUserName(e.target.value)}
+          style={{
+            flex: 1,
+            padding: 10,
+            borderRadius: 8,
+            border: '1px solid #3b82f6',
+            fontSize: 14,
+            outline: 'none',
+            color: '#333',
+            backgroundColor: '#fff',
+          }}
+        />
+        <select
+          value={newRole}
+          onChange={(e) => setNewRole(e.target.value as Role)}
+          style={{
+            padding: 10,
+            borderRadius: 8,
+            border: '1px solid #3b82f6',
+            fontSize: 14,
+            outline: 'none',
+            color: '#333',
+            backgroundColor: '#fff',
+          }}
+        >
+          <option value="ADMIN">ADMIN</option>
+          <option value="EDITOR">EDITOR</option>
+          <option value="VIEWER">VIEWER</option>
+        </select>
+        <button
+          onClick={handleAddMember}
+          style={{
+            padding: '10px 16px',
+            borderRadius: 8,
+            border: 'none',
+            backgroundColor: '#3b82f6',
+            color: '#fff',
+            fontSize: 14,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-3px)';
+            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          Добавить
+        </button>
+      </div>
 
       {/* Список участников */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 600, margin: '0 auto' }}>
@@ -288,20 +292,28 @@ export default function Page() {
           <div
             key={member.userId}
             style={{
+              padding: '16px',
+              borderRadius: '16px',
+              backgroundColor: '#ddecfcff',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              padding: 12,
-              borderRadius: 12,
-              border: '2px solid #3b82f6',
-              backgroundColor: '#fff',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <div>
-              {member.user.name} ({member.role})
-            </div>
+            <div>{member.user.name} ({member.role})</div>
 
-            {currentUserRole === 'ADMIN' && member.userId !== currentUserId && (
+            {/* Удаление участника */}
+            {member.userId !== undefined && member.userId !== currentUserId && (
               <button
                 onClick={() => handleRemoveMember(member.userId)}
                 style={{
