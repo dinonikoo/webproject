@@ -5,7 +5,7 @@ import { BoardRole } from '@prisma/client';
 
 // GET /api/boards — возвращает все доски текущего пользователя с участниками
 export async function GET(req: NextRequest) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(req);
   console.log('[FETCH BOARDS]', user?.name);
   if (!user) {
     return NextResponse.json({ message: 'Не авторизован' }, { status: 401 });
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/boards — создаёт новую доску с текущим пользователем как админом
 export async function POST(req: NextRequest) {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(req);
   if (!user) {
     return NextResponse.json({ message: 'Не авторизован' }, { status: 401 });
   }

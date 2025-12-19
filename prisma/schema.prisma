@@ -39,10 +39,12 @@ model User {
   name         String     @unique
   passwordHash String
   role         GlobalRole @default(USER)
+  telegramId   String?  @unique
+  telegramToken String? @unique
+
   boards BoardMember[]
   tasks     Task[]  
 }
-
 
 model Task {
   id          Int        @id @default(autoincrement())
