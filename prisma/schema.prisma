@@ -39,7 +39,7 @@ model User {
   name         String     @unique
   passwordHash String
   role         GlobalRole @default(USER)
-  telegramId   String?  @unique
+  telegramId   String? 
   telegramToken String? @unique
 
   boards BoardMember[]
