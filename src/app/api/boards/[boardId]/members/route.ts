@@ -20,7 +20,6 @@ export async function GET(
   const id = Number(boardId);
   if (!id) return NextResponse.json({ message: 'Invalid boardId' }, { status: 400 });
 
-  // Проверяем, что пользователь состоит в доске
   const membership = await prisma.boardMember.findUnique({
     where: { boardId_userId: { boardId: id, userId: user.id } },
   });
@@ -87,7 +86,6 @@ export async function POST(
     );
   }
 
-  // Ищем пользователя по уникальному name
   const userToAdd = await prisma.user.findUnique({
     where: { name },
     select: { id: true, name: true },
@@ -107,7 +105,6 @@ export async function POST(
     );
   }
 
-  // Проверка, что пользователь ещё не в доске
   const existingMember = await prisma.boardMember.findUnique({
     where: {
       boardId_userId: {
@@ -124,21 +121,34 @@ export async function POST(
     );
   }
 
-  const member = await prisma.boardMember.create({
-    data: {
-      boardId: boardIdNum,
-      userId: userToAdd.id,
-      role,
+let prismaRole: BoardRole;
+
+switch (role?.toUpperCase()) {
+  case 'ADMIN':
+    prismaRole = BoardRole.ADMIN;
+    break;
+  case 'EDITOR':
+    prismaRole = BoardRole.EDITOR;
+    break;
+  case 'VIEWER':
+    prismaRole = BoardRole.VIEWER;
+    break;
+  default:
+    return NextResponse.json({ message: 'Invalid role' }, { status: 400 });
+}
+
+const member = await prisma.boardMember.create({
+  data: {
+    boardId: boardIdNum,
+    userId: userToAdd.id,
+    role: prismaRole, // используем enum
+  },
+  include: {
+    user: {
+      select: { id: true, name: true },
     },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-  });
+  },
+});
 
   return NextResponse.json(member);
 }
