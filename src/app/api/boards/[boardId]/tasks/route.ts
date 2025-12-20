@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
+import { BoardRole } from '@prisma/client';
 
 export async function GET(
   _: NextRequest,
@@ -19,11 +20,37 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ boardId: string }> }
 ) {
-    
-    const user = await getCurrentUser();
+    const user = await getCurrentUser(req);
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { boardId } = await params;
+  const boardIdNum = Number(boardId);
+  if (!boardIdNum) {
+    return NextResponse.json({ message: 'Invalid boardId' }, { status: 400 });
+  }
+
+  const membership = await prisma.boardMember.findUnique({
+    where: {
+      boardId_userId: {
+        boardId: boardIdNum,
+        userId: user.id,
+      },
+    },
+  });
+
+  if (!membership) {
+    return NextResponse.json(
+      { message: 'You are not a member of this board' },
+      { status: 403 }
+    );
+  }
+
+  if (membership.role !== BoardRole.ADMIN) {
+    return NextResponse.json(
+      { message: 'No permission to create tasks' },
+      { status: 403 }
+    );
+  }
 
     const { title, description } = await req.json();
 
